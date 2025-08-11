@@ -45,7 +45,6 @@
         tone-mapping="neutral"
         shadow-intensity="1"
         exposure="1"
-        environment-image="assets/environment.hdr"
         poster=""
         loading="eager">
       </model-viewer>
@@ -60,6 +59,11 @@
       const sel = document.getElementById('variantSelect');
       const exposure = document.getElementById('exposure');
       const shadow = document.getElementById('shadow');
+
+      // Load optional environment map if present.
+      fetch('assets/environment.hdr', {method: 'HEAD'})
+        .then((res) => { if (res.ok) mv.environmentImage = 'assets/environment.hdr'; })
+        .catch(() => {});
 
       function populateVariants() {
         const variants = mv.availableVariants || [];
