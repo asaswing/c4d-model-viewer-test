@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>model-viewer starter</title>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+    <style>
+      :root { --ui-max: 1200px; }
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; line-height: 1.4; }
+      header, main { max-width: var(--ui-max); margin: 0 auto; padding: 16px; }
+      header h1 { font-size: 1.25rem; margin: 0 0 4px; }
+      .bar { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+      label { font-size: .9rem; }
+      model-viewer { width: 100%; height: 70vh; background: #f6f7f9; border: 1px solid #e5e7eb; border-radius: 12px; }
+      footer { max-width: var(--ui-max); margin: 24px auto; color: #6b7280; font-size: .85rem; padding: 0 16px 24px; }
+      .notice { background: #fffdea; border: 1px solid #facc15; color: #7c6f1b; padding: 8px 12px; border-radius: 8px; }
+      code { background: #f3f4f6; padding: 2px 6px; border-radius: 6px; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>model-viewer starter</h1>
+      <p class="notice">Put your model at <code>assets/model.glb</code> (keep it under ~100&nbsp;MB for GitHub Pages). Optional HDR at <code>assets/environment.hdr</code>.</p>
+      <div class="bar">
+        <label>Variants:
+          <select id="variantSelect" disabled>
+            <option>— none —</option>
+          </select>
+        </label>
+        <label>Exposure: <input id="exposure" type="range" min="0" max="2" step="0.05" value="1"></label>
+        <label>Shadow: <input id="shadow" type="range" min="0" max="2" step="0.05" value="1"></label>
+      </div>
+    </header>
+
+    <main>
+      <model-viewer id="mv"
+        src="assets/model.glb"
+        alt="Demo glTF/GLB model"
+        ar
+        ar-modes="webxr scene-viewer quick-look"
+        camera-controls
+        touch-action="pan-y"
+        tone-mapping="neutral"
+        shadow-intensity="1"
+        exposure="1"
+        environment-image="assets/environment.hdr"
+        poster=""
+        loading="eager">
+      </model-viewer>
+    </main>
+
+    <footer>
+      <p>Tip: If your model has <code>KHR_materials_variants</code>, they will appear in the dropdown. You can also set <code>mv.variantName = 'YourVariant'</code> in JS.</p>
+    </footer>
+
+    <script type="module">
+      const mv = document.getElementById('mv');
+      const sel = document.getElementById('variantSelect');
+      const exposure = document.getElementById('exposure');
+      const shadow = document.getElementById('shadow');
+
+      function populateVariants() {
+        const variants = mv.availableVariants || [];
+        sel.innerHTML = '';
+        if (!variants.length) {
+          sel.disabled = true;
+          sel.innerHTML = '<option>— none —</option>';
+          return;
+        }
+        sel.disabled = false;
+        for (const v of variants) {
+          const opt = document.createElement('option');
+          opt.value = v;
+          opt.textContent = v;
+          sel.appendChild(opt);
+        }
+        if (!mv.variantName && variants.length) {
+          mv.variantName = variants[0];
+          sel.value = variants[0];
+        } else if (mv.variantName) {
+          sel.value = mv.variantName;
+        }
+      }
+
+      mv.addEventListener('load', populateVariants);
+      sel.addEventListener('change', () => { mv.variantName = sel.value || null; });
+      exposure.addEventListener('input', () => { mv.exposure = parseFloat(exposure.value); });
+      shadow.addEventListener('input', () => { mv.shadowIntensity = parseFloat(shadow.value); });
+
+      window.mv = mv;
+      console.log('%cTry in console:', 'font-weight:bold', "mv.availableVariants, mv.textureMemoryBytes, mv.model");
+    </script>
+  </body>
+</html>
