@@ -29,38 +29,36 @@
             <option>— none —</option>
           </select>
         </label>
-        <label>Exposure: <input id="exposure" type="range" min="0" max="2" step="0.05" value="1"></label>
-        <label>Shadow: <input id="shadow" type="range" min="0" max="2" step="0.05" value="1"></label>
+        <label>Dimensions: <input id="dimensions" type="checkbox"></label>
       </div>
     </header>
 
     <main>
-      <model-viewer id="mv"
-        src="assets/model.glb"
-        alt="Demo glTF/GLB model"
-        ar
-        ar-modes="webxr scene-viewer quick-look"
-        ar-placement="wall"
-        camera-controls
-        touch-action="pan-y"
-        tone-mapping="neutral"
-        shadow-intensity="1"
-        exposure="1"
-        poster=""
-        loading="eager"
-        show-dimensions>
-      </model-viewer>
-    </main>
+        <model-viewer id="mv"
+          src="assets/model.glb"
+          alt="Demo glTF/GLB model"
+          ar
+          ar-modes="webxr scene-viewer quick-look"
+          ar-placement="wall"
+          camera-controls
+          touch-action="pan-y"
+          tone-mapping="neutral"
+          shadow-intensity="1"
+          exposure="1"
+          poster=""
+          loading="eager"
+          show-dimensions>
+        </model-viewer>
+      </main>
 
     <footer>
       <p>Tip: If your model has <code>KHR_materials_variants</code>, they will appear in the dropdown. You can also set <code>mv.variantName = 'YourVariant'</code> in JS.</p>
     </footer>
 
     <script type="module">
-      const mv = document.getElementById('mv');
-      const sel = document.getElementById('variantSelect');
-      const exposure = document.getElementById('exposure');
-      const shadow = document.getElementById('shadow');
+        const mv = document.getElementById('mv');
+        const sel = document.getElementById('variantSelect');
+        const dims = document.getElementById('dimensions');
 
       // Load optional environment map if present.
       fetch('assets/environment.hdr', {method: 'HEAD'})
@@ -90,11 +88,10 @@
         }
       }
 
-      mv.addEventListener('load', populateVariants);
-      mv.addEventListener('load', () => { mv.showDimensions = true; });
-      sel.addEventListener('change', () => { mv.variantName = sel.value || null; });
-      exposure.addEventListener('input', () => { mv.exposure = parseFloat(exposure.value); });
-      shadow.addEventListener('input', () => { mv.shadowIntensity = parseFloat(shadow.value); });
+        mv.addEventListener('load', populateVariants);
+        mv.addEventListener('load', () => { dims.checked = mv.showDimensions; });
+        sel.addEventListener('change', () => { mv.variantName = sel.value || null; });
+        dims.addEventListener('change', () => { mv.showDimensions = dims.checked; });
 
       window.mv = mv;
       console.log('%cTry in console:', 'font-weight:bold', "mv.availableVariants, mv.textureMemoryBytes, mv.model");
